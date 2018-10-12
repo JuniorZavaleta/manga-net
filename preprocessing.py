@@ -2,12 +2,13 @@ import os
 
 import redis
 
-from skimage import io
+from skimage import io, exposure
+from skimage.transform import resize
 
 r = redis.StrictRedis(host='localhost', port=6379, db=0)
 
 
-def split(filename, folder, manga_id):
+def preprocesamiento(filename, folder, manga_id):
     """
     Separar la imagen que contiene dos páginas
     y guardarlo como escala de grises
@@ -25,6 +26,19 @@ def split(filename, folder, manga_id):
 
     right = (i - 2) * 2 + 1
     left = right + 1
+
+    # Reducir dimensiones
+    page_left = resize(page_left, (415, 295), anti_aliasing=True)
+    page_right = resize(page_right, (415, 295), anti_aliasing=True)
+
+    # Recortar márgenes
+    page_left = page_left[10:400, 10:285]
+    page_right = page_right[10:400, 10:285]
+
+    # Reajustar limites
+    page_left = exposure.rescale_intensity(page_left, in_range=(-1, 1))
+    page_right = exposure.rescale_intensity(page_right, in_range=(-1, 1))
+
     io.imsave("manga/{}/page{}.jpg".format(manga_id, right), page_right)
     io.imsave("manga/{}/page{}.jpg".format(manga_id, left), page_left)
 
@@ -41,21 +55,4 @@ solo se separa las imágenes porque salen desordenada
 for i in range(2, 16):
     for file_name in list_dir:
         if file_name.split(".")[0] == str(i).zfill(3):
-            split(file_name, folder, mid)
-
-
-# from skimage import io, transform
-# from torchvision import transforms
-#
-# class CustomCrop(object):
-#
-#     def __init__(self, output_size):
-#         assert isinstance(output_size, (int, tuple))
-#         self.output_size = output_size
-#
-#     def __call__(self, sample):
-#         image = sample['image']
-#
-#
-# transformations = transforms.Compose([
-#     CustomCrop])
+            preprocesamiento(file_name, folder, mid)
