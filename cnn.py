@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 
 class MangaNet(nn.Module):
 
-    def __init__(self, num_classes=1000):
+    def __init__(self, num_classes=12):
         super(MangaNet, self).__init__()
         self.features = nn.Sequential(
             nn.Conv2d(3, 16, kernel_size=5, stride=2, padding=0),
@@ -25,16 +25,16 @@ class MangaNet(nn.Module):
         )
         self.classifier = nn.Sequential(
             nn.Dropout(),
-            nn.Linear(13 * 9 * 128, 1024),
+            nn.Linear(4 * 6 * 128, 256),
             nn.ReLU(inplace=True),
             nn.Dropout(),
-            nn.Linear(1024, 1024),
+            nn.Linear(256, 256),
             nn.ReLU(inplace=True),
-            nn.Linear(1024, num_classes),
+            nn.Linear(256, num_classes),
         )
 
     def forward(self, x):
         x = self.features(x)
-        x = x.view(x.size(0), 13 * 9 * 128)
+        x = x.view(x.size(0), 4 * 6 * 128)
         x = self.classifier(x)
         return x

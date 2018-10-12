@@ -17,9 +17,9 @@ def preprocesamiento(filename, folder, manga_id):
     :param manga_id:
     :return:
     """
-    img = io.imread('data/{}/{}'.format(folder, filename), as_gray=True)
+    img = io.imread('data/{}/{}'.format(folder, filename))
 
-    height, width = img.shape
+    height, width, _ = img.shape
     width_cutoff = width // 2
     page_left = img[:, :width_cutoff]
     page_right = img[:, width_cutoff:]
