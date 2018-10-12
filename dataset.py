@@ -1,20 +1,18 @@
-import os
-import torch
 import pandas as pd
-from torch.utils.data import Dataset, DataLoader
-from skimage import io, transform
+from torch.utils.data import Dataset
+from skimage import io
 
 
 class Manga109Dataset(Dataset):
-    def __init__(self, json_file, root_dir, transform=None):
+    def __init__(self, csv_file, root_dir, transform=None):
         """
         Args:
-            json_file (string): Path to the csv file with annotations.
+            csv_file (string): Path to the csv file with annotations.
             root_dir (string): Directory with all the images.
             transform (callable, optional): Optional transform to be applied
                 on a sample.
         """
-        self.label_frame = pd.read_json(json_file)
+        self.label_frame = pd.read_csv(csv_file)
         self.root_dir = root_dir
         self.transform = transform
 
@@ -22,14 +20,19 @@ class Manga109Dataset(Dataset):
         return len(self.label_frame)
 
     def __getitem__(self, idx):
-        img_name = os.path.join(self.root_dir,
-                                self.label_frame.iloc[idx, 0])
-        image = io.imread(img_name)
-        labels = self.label_frame.iloc[idx, 1:].as_matrix()
-        labels = labels.astype('float').reshape(-1, 2)
-        sample = {'image': image, 'labels': labels}
+        manga = str(self.label_frame.iloc[idx, 0])
+        pagina = str(self.label_frame.iloc[idx, 1])
 
-        if self.transform:
-            sample = self.transform(sample)
+        img_name = '{}/{}/page{}.jpg'.format(self.root_dir, manga, pagina)
+        image = io.imread(img_name, as_gray=True)
+        labels = self.label_frame.iloc[idx, 2:].values
 
-        return sample
+        return {'image': image, 'labels': labels}
+
+
+manga_dataset = Manga109Dataset(csv_file='./mangalabels.csv', root_dir='manga')
+
+for i in range(len(manga_dataset)):
+    sample = manga_dataset[i]
+
+    print(sample['labels'])

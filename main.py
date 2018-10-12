@@ -14,10 +14,7 @@ num_classes = 10
 batch_size = 100
 learning_rate = 0.001
 
-train_dataset = torchvision.datasets.MNIST(root='../../data/',
-                                           train=True,
-                                           transform=transforms.ToTensor(),
-                                           download=True)
+train_dataset = torchvision.datasets.ImageFolder(root='/manga/')
 
 test_dataset = torchvision.datasets.MNIST(root='../../data/',
                                           train=False,
