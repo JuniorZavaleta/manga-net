@@ -32,7 +32,7 @@ class Manga109Dataset(Dataset):
         image = torch.from_numpy(image)
         labels = torch.from_numpy(labels)
 
-        return {'image': image.type('torch.FloatTensor'), 'labels': labels}
+        return {'image': image.type('torch.FloatTensor'), 'labels': labels.type('torch.FloatTensor')}
 
 
 manga_dataset = Manga109Dataset(csv_file='./mangalabels.csv', root_dir='manga')

@@ -1,5 +1,4 @@
 import torch.nn as nn
-import matplotlib.pyplot as plt
 
 
 class MangaNet(nn.Module):
@@ -19,22 +18,25 @@ class MangaNet(nn.Module):
 
             nn.Conv2d(32, 64, kernel_size=3, stride=2, padding=0),
             nn.ReLU(inplace=True),
-            nn.Conv2d(64, 128, kernel_size=2, stride=1, padding=1),
+            nn.Conv2d(64, 256, kernel_size=2, stride=1, padding=1),
             nn.ReLU(inplace=True),
             nn.MaxPool2d(kernel_size=2, stride=2),
         )
         self.classifier = nn.Sequential(
+            nn.Linear(4 * 6 * 256, 1024),
             nn.Dropout(),
-            nn.Linear(4 * 6 * 128, 256),
-            nn.ReLU(inplace=True),
+            nn.ReLU(),
+            nn.Linear(1024, 1024),
+            nn.ReLU(),
             nn.Dropout(),
-            nn.Linear(256, 256),
-            nn.ReLU(inplace=True),
+            nn.Linear(1024, 256),
+            nn.ReLU(),
+            nn.Dropout(),
             nn.Linear(256, num_classes),
         )
 
     def forward(self, x):
         x = self.features(x)
-        x = x.view(x.size(0), 4 * 6 * 128)
+        x = x.view(-1, 4 * 6 * 256)
         x = self.classifier(x)
         return x
