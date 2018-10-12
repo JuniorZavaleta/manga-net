@@ -10,8 +10,7 @@ device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
 # Hyper parameters
 num_epochs = 10
-num_classes = 10
-batch_size = 100
+num_classes = 12
 learning_rate = 0.001
 
 train_dataset = Manga109Dataset(csv_file='./mangalabels.csv', root_dir='manga')
