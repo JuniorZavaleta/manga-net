@@ -2,3 +2,6 @@ venv/
 data/
 .idea/
 manga/
+model.ckpt
+*.pyc
+__pycache__/
