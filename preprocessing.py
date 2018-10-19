@@ -43,16 +43,16 @@ def preprocesamiento(filename, folder, manga_id):
     io.imsave("manga/{}/page{}.jpg".format(manga_id, left), page_left)
 
 
-mid = 3
-manga = r.hgetall('M{}'.format(mid))
-folder = manga[b'carpeta'].decode("utf-8")
-list_dir = os.listdir('data/{}'.format(folder))
-
 """
 Se ignoran las primeras dos páginas 000 y 001 porque no suelen aportar
 solo se separa las imágenes porque salen desordenada
 """
-for i in range(2, 16):
-    for file_name in list_dir:
-        if file_name.split(".")[0] == str(i).zfill(3):
-            preprocesamiento(file_name, folder, mid)
+for m_id in range(1, 8):
+    for i in range(2, 17):
+        manga = r.hgetall('M{}'.format(m_id))
+        folder = manga[b'carpeta'].decode("utf-8")
+        list_dir = os.listdir('data/{}'.format(folder))
+
+        for file_name in list_dir:
+            if file_name.split(".")[0] == str(m_id).zfill(3):
+                preprocesamiento(file_name, folder, m_id)
