@@ -15,3 +15,16 @@ para que se entrene la red neuronal y para evaluar los resultados
 ```
 python test.py
 ````
+
+correr la aplicación en máquina local
+
+```
+FLASK_APP=server.py flask run
+```
+
+y luego habilitar el túnel con ngrok
+
+
+```
+ngrok http 5000
+```

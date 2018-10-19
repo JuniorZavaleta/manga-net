@@ -23,16 +23,16 @@ class MangaNet(nn.Module):
             nn.MaxPool2d(kernel_size=2, stride=2),
         )
         self.classifier = nn.Sequential(
-            nn.Linear(4 * 6 * 256, 1024),
+            nn.Linear(4 * 6 * 256, 1024, bias=False),
             nn.Dropout(),
             nn.ReLU(),
-            nn.Linear(1024, 1024),
+            nn.Linear(1024, 1024, bias=False),
             nn.ReLU(),
             nn.Dropout(),
-            nn.Linear(1024, 256),
+            nn.Linear(1024, 256, bias=False),
             nn.ReLU(),
             nn.Dropout(),
-            nn.Linear(256, num_classes),
+            nn.Linear(256, num_classes, bias=False),
         )
 
     def forward(self, x):
