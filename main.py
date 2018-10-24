@@ -13,7 +13,7 @@ classes = ('L1', 'L2', 'L3', 'L4', 'L5', 'L6',
            'L7', 'L8', 'L9', 'L10', 'L11', 'L12')
 
 # Hyper parameters
-num_epochs = 2
+num_epochs = 20
 num_classes = 12
 learning_rate = 0.0001
 
