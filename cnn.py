@@ -3,10 +3,10 @@ import torch.nn as nn
 
 class MangaNet(nn.Module):
 
-    def __init__(self, num_classes=12):
+    def __init__(self, num_classes=8):
         super(MangaNet, self).__init__()
         self.features = nn.Sequential(
-            nn.Conv2d(3, 16, kernel_size=5, stride=2, padding=0),
+            nn.Conv2d(1, 16, kernel_size=5, stride=2, padding=0),
             nn.ReLU(inplace=True),
             nn.Conv2d(16, 16, kernel_size=3, stride=2, padding=0),
             nn.ReLU(inplace=True),

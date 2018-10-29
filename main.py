@@ -8,13 +8,9 @@ from dataset import Manga109Dataset
 # Device configuration
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
-# Etiquetas
-classes = ('L1', 'L2', 'L3', 'L4', 'L5', 'L6',
-           'L7', 'L8', 'L9', 'L10', 'L11', 'L12')
-
 # Hyper parameters
 num_epochs = 20
-num_classes = 12
+num_classes = 8
 learning_rate = 0.0001
 
 train_dataset = Manga109Dataset(csv_file='./mangalabels.csv', root_dir='manga')
@@ -22,7 +18,7 @@ train_dataset = Manga109Dataset(csv_file='./mangalabels.csv', root_dir='manga')
 # Data loader
 train_loader = DataLoader(train_dataset, batch_size=1, shuffle=True)
 
-model = MangaNet(12)
+model = MangaNet(8)
 # Loss and optimizer
 criterion = nn.MultiLabelSoftMarginLoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)

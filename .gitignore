@@ -7,3 +7,4 @@ manga/
 __pycache__/
 config.py
 static/
+telegram_processed/

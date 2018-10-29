@@ -1,21 +1,19 @@
 import torch
 import numpy as np
 from torch.utils.data import DataLoader
-from sklearn.metrics import confusion_matrix, accuracy_score, precision_score
-from torch import  nn
+from sklearn.metrics import accuracy_score, precision_score
+
 from cnn import MangaNet
 from dataset import Manga109Dataset
-import pandas as pd
 
-model = MangaNet(12)
+model = MangaNet(8)
 checkpoint = torch.load('model.ckpt')
 model.load_state_dict(checkpoint)
 
-test_dataset = Manga109Dataset(csv_file='./mangalabels.csv', root_dir='manga')
+test_dataset = Manga109Dataset(csv_file='./test.csv', root_dir='manga')
 test_loader = DataLoader(test_dataset, batch_size=1, shuffle=True)
 
-classes = ['Animal', 'Peleas', 'Fantasia', '4 paneles', 'Drama Histórico', 'Terror', 'Humor', 'Romance',
-           'Comedia romántica', 'Ciencia ficción', 'Deportes', 'Suspenso']
+classes = ['Peleas', 'Terror', 'Humor', 'Romance', 'Comedia romántica', 'Ciencia ficción', 'Deportes', 'Suspenso']
 
 true_labels = []
 predicted_labels = []
@@ -32,7 +30,7 @@ with torch.no_grad():
 
     for i, sample in enumerate(test_loader):
         outputs = model(sample['image'])
-        predicted_t = torch.sigmoid(outputs).data > 0.2
+        predicted_t = torch.sigmoid(outputs).data > 0.25
 
         groun_truth_t = sample['labels'].type('torch.IntTensor')
         _groun_truth = groun_truth_t.numpy().flatten()

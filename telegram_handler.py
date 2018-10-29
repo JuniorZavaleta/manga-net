@@ -1,13 +1,24 @@
 # -*- coding: utf-8 -*-
+import torch
+import numpy as np
+
 import telegram
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import (Updater, CommandHandler, ConversationHandler,
                           CallbackQueryHandler, MessageHandler, Filters)
-from datetime import datetime
+
 import config
+from cnn import MangaNet
+from preprocessing import preprocesamiento_telegram
+from skimage import io
 
 bot = telegram.Bot(token=config.TELEGRAM_TOKEN)
 updater = Updater(config.TELEGRAM_TOKEN)
+
+model = MangaNet(8)
+checkpoint = torch.load('model.ckpt')
+classes = ['Peleas', 'Fantasia', '4 paneles', 'Drama Histórico', 'Terror', 'Humor', 'Romance',
+           'Comedia romántica', 'Ciencia ficción', 'Deportes', 'Suspenso']
 
 
 # Utils
@@ -34,6 +45,8 @@ def add_image(bot, update):
     file_path = 'static/telegram_images/{}.jpg'.format(file_id)
     photo_file.download(file_path)
 
+    return file_id
+
 
 def cancel(bot, update):
     update.message.reply_text("Entiendo, nos vemos luego.")
@@ -55,9 +68,27 @@ def wait_for_image(bot, update):
 
 
 def predict_image(bot, update):
-    add_image(bot, update)
-    # TODO: Poner predicción aquí
-    update.message.reply_text(u"La predicción aún no está habilitada")
+    file_id = add_image(bot, update)
+    images = preprocesamiento_telegram(str(file_id))
+
+    model.load_state_dict(checkpoint)
+
+    predicted_set = set()
+    for image_path in images:
+        image = io.imread(image_path, as_gray=True)
+        image = image[:, :, np.newaxis]
+        image = image.transpose((2, 0, 1))
+        image = torch.from_numpy(image)
+        image = image.type('torch.FloatTensor')
+        outputs = model(image.unsqueeze(0))
+        predicted_t = torch.sigmoid(outputs).data > 0.2
+        _predicted = predicted_t.numpy().flatten()
+        predicted = np.argwhere(_predicted == 1).flatten()
+        for i in predicted:
+            print(classes[i])
+            predicted_set.add(classes[i])
+
+    update.message.reply_text(u"Etiquetas: {}".format(', '.join(predicted_set)))
 
     keyboard = [[InlineKeyboardButton('Si', callback_data='wait_for_image'),
                  InlineKeyboardButton('No', callback_data='ok_thanks')]]
@@ -69,6 +100,8 @@ def predict_image(bot, update):
 
 def ok_thanks(bot, update):
     update.callback_query.message.reply_text(u'Ok, nos vemos.')
+
+    return ConversationHandler.END
 
 
 (LOAD_IMAGE, OK_THANKS) = range(2)

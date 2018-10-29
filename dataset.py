@@ -1,8 +1,8 @@
 import torch
 import pandas as pd
-from torch.utils.data import Dataset, DataLoader
+from torch.utils.data import Dataset
 from skimage import io
-from torchvision.transforms.functional import to_grayscale
+import numpy as np
 
 
 class Manga109Dataset(Dataset):
@@ -26,7 +26,8 @@ class Manga109Dataset(Dataset):
         pagina = str(self.label_frame.iloc[idx, 1])
 
         img_name = '{}/{}/page{}.jpg'.format(self.root_dir, manga, pagina)
-        image = io.imread(img_name)
+        image = io.imread(img_name, as_gray=True)
+        image = image[:, :, np.newaxis]
         labels = self.label_frame.iloc[idx, 2:].values
         image = image.transpose((2, 0, 1))
         image = torch.from_numpy(image)
@@ -35,7 +36,7 @@ class Manga109Dataset(Dataset):
         return {'image': image.type('torch.FloatTensor'), 'labels': labels.type('torch.FloatTensor')}
 
 
-manga_dataset = Manga109Dataset(csv_file='./mangalabels.csv', root_dir='manga')
+# manga_dataset = Manga109Dataset(csv_file='./mangalabels.csv', root_dir='manga')
 
 # for i in range(len(manga_dataset)):
 #     sample = manga_dataset[i]
