@@ -11,12 +11,12 @@ TELEGRAM_IN_FOLDER = 'static/telegram_images/{}.jpg'
 TELEGRAM_OUT_FOLDER = 'telegram_processed/{}.jpg'
 
 
-def preprocesamiento(filename, folder, manga_id):
+def preprocesamiento(filename, folder, manga_id, i):
     """
     Separar la imagen que contiene dos páginas
     y guardarlo como escala de grises
-    :param filename:
-    :param folder:
+    :param str filename:
+    :param str folder:
     :param manga_id:
     :return:
     """
@@ -103,4 +103,4 @@ for m_id in range(1, 8):
 
         for file_name in list_dir:
             if file_name.split(".")[0] == str(m_id).zfill(3):
-                preprocesamiento(file_name, folder, m_id)
+                preprocesamiento(file_name, folder, m_id, i)
