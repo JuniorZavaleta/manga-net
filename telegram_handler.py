@@ -17,8 +17,7 @@ updater = Updater(config.TELEGRAM_TOKEN)
 
 model = MangaNet(8)
 checkpoint = torch.load('model.ckpt')
-classes = ['Peleas', 'Fantasia', '4 paneles', 'Drama Histórico', 'Terror', 'Humor', 'Romance',
-           'Comedia romántica', 'Ciencia ficción', 'Deportes', 'Suspenso']
+classes = ['Peleas', 'Terror', 'Humor', 'Romance', 'Comedia romántica', 'Ciencia ficción', 'Deportes', 'Suspenso']
 
 
 # Utils
